@@ -17,7 +17,7 @@ namespace Acmion.GenericEnums
         private Lazy<int> _cachedHashCode;
         private Lazy<HashSet<GenericEnum>> _lazyValueSet;
 
-        protected GenericEnum(object? internalValue)
+        protected GenericEnum(dynamic? internalValue)
         {
             HasValue = true;
             InternalValue = internalValue;

@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            GenericEnum - An Enum of Any Underlying Value Type for .NET
+        </title>
+
+        <meta name="description" content="GenericEnum, a feature rich and generic enum of any underlying value type for .NET.">
+        <meta name="keywords" content="ASP, NET, .NET, Core, C#, enum, generic, code, mvc, razor pages">
+        <meta name="robots" content="index, follow">
+        <meta name="language" content="English">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="visualization/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="visualization/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="visualization/favicon/favicon-16x16.png">
+        <link rel="manifest" href="visualization/favicon/site.webmanifest">
+        <link rel="mask-icon" href="visualization/favicon/safari-pinned-tab.svg" color="#0355ea">
+        <link rel="shortcut icon" href="visualization/favicon/favicon.ico">
+        <meta name="msapplication-TileColor" content="#020202">
+        <meta name="msapplication-config" content="visualization/favicon/browserconfig.xml">
+        <meta name="theme-color" content="#020202">
+
+        <!-- Libraries -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.acmion.com/acmion/hyper-nav/dist/hyper-nav-default.min.css" />
+
+        <!-- Custom -->
+        <link rel="stylesheet" href="/Web/css/main.css" />
+    </head>
+    <body>
+        <header>
+            <nav class="hn-menu hn-top hn-fixed hn-shadow">
+                <input type="checkbox" name="hn-top-state" class="hn-input-state hn-input-state-nav hn-hide-desktop" id="hn-nav-cb">
+            
+                <div class="hn-nav container-md p-0">
+                    <div class="hn-section hn-section-brand">
+                        <div class="hn-item">
+                            <a id="hn-logo" class="hn-link" href="/">
+                                <span class="hn-content">
+                                    <strong style="font-weight: 600;">
+                                        GenericEnum
+                                    </strong>
+                                </span>
+                            </a>
+                        </div>
+                        
+                        <div class="hn-spacer"></div>
+
+                        <label class="hn-item hn-input hn-input-nav hn-hide-desktop" for="hn-nav-cb">
+                            <span class="hn-link">
+                                <span class="hn-content">
+                                    <span class="hn-input-active ">
+                                        <i class="ri-close-line"></i>
+                                    </span>
+                                    <span class="hn-input-default">
+                                        <i class="ri-menu-line"></i>
+                                    </span>
+                                </span>
+                            </span>
+                        </label>
+            
+                    </div>
+                    <div class="hn-section hn-section-body">
+                        <div class="hn-spacer"></div>
+
+                        <div class="hn-item">
+                            <a class="hn-link" href="#home">
+                                <span class="hn-content">
+                                    Home
+                                </span>
+                            </a>
+                        </div>
+                        <div class="hn-item">
+                            <a class="hn-link" href="#examples">
+                                <span class="hn-content">
+                                    Examples
+                                </span>
+                            </a>
+                        </div>
+                        <div class="hn-item">
+                            <a class="hn-link" href="#core">
+                                <span class="hn-content">
+                                    Core
+                                </span>
+                            </a>
+                        </div>
+                        <div class="hn-item">
+                            <a class="hn-link" href="#performance">
+                                <span class="hn-content">
+                                    Usage
+                                </span>
+                            </a>
+                        </div>
+                        <div class="hn-item">
+                            <a class="hn-link" href="#change-log">
+                                <span class="hn-content">
+                                    Changelog
+                                </span>
+                            </a>
+                        </div>
+                        <div class="hn-item">
+                            <a class="hn-link" href="#credits">
+                                <span class="hn-content">
+                                    Credits
+                                </span>
+                            </a>
+                        </div>
+                        <div class="hn-item">
+                            <a class="hn-link" href="https://github.com/Acmion/CshtmlComponent">
+                                <span class="hn-content">
+                                    GitHub
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            
+                <label class="hn-overlay" for="hn-nav-cb">
+                </label>
+            </nav>
+        </header>
+
+        <div class="scroll-anchor-height"></div>
+
+        <main class="container">
+            <section>
+                <h1 class="scroll-anchor" id="home">
+                    GenericEnum - An Enum of Any Underlying Value Type for .NET V1.0.0
+                </h1>
+            
+                <p>
+                    Enums in .NET are highly useful abstractions over simple constant values. However, the underlying value type 
+                    of enums are restriced to integer types (int, long, etc.), which diminishes their usability in many cases. 
+                    Additionally, operators,
+                    such as equality and inequality, are not defined between enums of different types. This problem is then 
+                    often solved by falling back on constant values, but this has significant downsides. For example, method 
+                    signatures can not determine what values are to be permitted and what values are not. All in all, codebases
+                    will soon become plagued by magic strings and magic numbers. GenericEnum intends to fix this problem, by 
+                    relaxing the constraints imposed on enums and allowing any underlying value type as well as 
+                    defining sensible operators. 
+                </p>
+                <p>
+                    <strong>Install the <a href="https://www.nuget.org/packages/Acmion.GenericEnums/">Nuget package</a>.</strong>
+                    <br />
+                    <strong>See more detailed <a href="#usage">Usage & Installation instructions</a></strong>.
+                </p>
+                
+            
+                <div class="p-2"></div>
+            
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-light h-100" style="border-color: #24E260;">
+                            <div class="card-body card-body-success">
+                                <h4 class="card-title">
+                                    GenericEnum
+                                </h4>
+                                <ul class="feature-list">
+                                    <li>
+                                        Generic Value Type
+                                    </li>
+                                    <li>
+                                        Comparison Between Different Types
+                                    </li>
+                                    <li>
+                                        Operator Overloads
+                                    </li>
+                                    <li>
+                                        Performant
+                                    </li>
+                                    <li>
+                                        Flexible
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light border-danger h-100">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    Enum
+                                </h4>
+                                <ul class="feature-list">
+                                    <li class="feature-not-enabled">
+                                        Generic Value Type
+                                    </li>
+                                    <li class="feature-not-enabled">
+                                        Comparison Between Different Types
+                                    </li>
+                                    <li>
+                                        Operator Overloads
+                                    </li>
+                                    <li>
+                                        Performant
+                                    </li>
+                                    <li class="feature-not-enabled">
+                                        Flexible
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <section>
+                    <p>
+                        <strong class="d-block">
+                            ✓ Feature Supported
+                        </strong>
+                        <strong class="d-block">
+                            ◻ Feature Partially Supported
+                        </strong>
+                        <strong class="d-block">
+                            ✕ Feature Not Supported
+                        </strong>
+                    </p>
+                </section>
+
+                <section>
+                    <h3>
+                        Important Features and Restrictions
+                    </h3>
+                    <p>
+                        This section is a summary of the most important features and restrictions of GenericEnum. The same information is also 
+                        described under <a href="#core">Core</a>, but it may get lost under the other stuff. 
+                    </p>
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Maximum Number of Values
+                        </h4>
+                        <p>
+                            Currently, the maximum number of value that a GenericEnum can define is 64. The restriction is based 
+                            upon the number of bits in an <code>ulong</code>. Storing a "bitflag" makes the comparison of two GenericEnums 
+                            of the same type blazingly fast. This may be relaxed in a later release.
+                        </p>
+                    </section>
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Equality
+                        </h4>
+                        <p>
+                            The equality of two GenericEnums is based on the equality of the underlying value.
+                            In other words, the equality is (in practice) defined as: 
+                            <code>GenericEnum0.Value.Equals(GenericEnum1.Value)</code>,
+                            which can then be based on reference or value or something else. For example, if one GenericEnum has 
+                            a Value of <code>1</code> (type: int) and another has a Value of <code>1.0</code> (type: double), then 
+                            due to .NET equality conventions this will evaluate to true.
+                        </p>
+                    </section>
+                    
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Value Mutability
+                        </h4>
+                        <p>
+                            The Value of a GenericEnum can not be changed outside the constructor. However, since the Value
+                            can be of any type, for example, a custom class, the underlying state may be changed. Changing the  
+                            underlying state (especially if it affects equality comparisons) is forbidden and will probably result
+                            in incorrect GenericEnum behavior. Unfortunately, this can not be enforced and no actual errors can 
+                            be generated. 
+                        </p>
+                    </section>
+                </section>
+            </section>
+
+            <section>
+                <h2 class="scroll-anchor" id="examples">
+                    Examples
+                </h2>
+
+                <p>
+                    This section contains examples of how CshtmlComponents can be coded.
+                </p>
+
+                <section class="indent">
+                    <h3 style="margin-top: 0">
+                        Basic Example
+                    </h3>
+                    
+                    <p>
+                        A basic CshtmlComponent that features <strong>attributes</strong> and <strong>child content</strong>.
+                    </p>
+                    
+                    <section class="indent">
+                        <h4>
+                            C# Code (ExampleComponent.cshtml.cs)
+                        </h4>
+                        <pre><code id="basic-example-code"></code></pre>
+
+                        <h4>
+                            Cshtml Code (ExampleComponent.cshtml)
+                        </h4>
+                        <pre><code id="basic-example-cshtml-code"></code></pre>
+
+                        <h4>
+                            Component Instantiation
+                        </h4>
+                        <pre><code id="basic-example-instantiation-code"></code></pre>
+                    </section>
+
+                </section>
+
+                <section class="indent">
+                    <h3 style="margin-top: 0">
+                        Advanced Example
+                    </h3>
+                
+                    <p>
+                        An advanced CshtmlComponent that features <strong>attributes</strong>, <strong>child content</strong>, 
+                        <strong>named slots</strong>, <strong>typed slots</strong>, <strong>reference capturing</strong>, 
+                        <strong>head content injection</strong>, <strong>body content injection</strong>, 
+                        <strong>one-off content</strong> and <strong>model mutation</strong>.
+                    </p>
+
+                    <section class="indent">
+                        <h4>
+                            C# Code (AdvancedExampleComponent.cshtml.cs)
+                        </h4>
+                        <pre><code id="advanced-example-code"></code></pre>
+                    
+                        <h4>
+                            Cshtml Code (AdvancedExampleComponent.cshtml)
+                        </h4>
+                        <pre><code id="advanced-example-cshtml-code"></code></pre>
+                    
+                        <h4>
+                            Component Instantiation
+                        </h4>
+                        <pre><code id="advanced-example-instantiation-code"></code></pre>
+                    </section>
+                
+                </section>
+                
+
+            </section>
+
+            <section>
+                <h2 class="scroll-anchor" id="core">
+                    Core
+                </h2>
+            
+                <p>
+                    This section documents the inner workings of GenericEnum.
+                </p>
+
+                <section class="indent">
+                    <h3>GenericEnum</h3>
+                    <p>
+                        <code>GenericEnum</code> is a class which all GenericEnums inherit. This class should neither be instantiated 
+                        nor be inherited directly, even if that is technically possible.
+                    </p>
+
+                    <section class="indent">
+                        <h4>
+                            Properties
+                        </h4>
+                
+                        <p>
+                            The properties of <code>GenericEnum</code>.
+                        </p>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                HasValue
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: bool
+                            </p>
+                            <p>
+                                <strong>Description</strong>: A property that describes whether an instance of a GenericEnum was instantiated
+                                with an explicit value or not. 
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                InternalValue
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: dynamic?
+                            </p>
+                            <p>
+                                <strong>Description</strong>: A property that contains the underlying value of GenericEnum.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                ValueSet
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: HashSet&lt;GenericEnum&gt; 
+                            </p>
+                            <p>
+                                <strong>Description</strong>: A property that contains all associated GenericEnums to an instance.
+                                For example, one can create the union of two GenericEnums and in that case ValueSet will contain them 
+                                both.
+                            </p>
+                        </section>
+                    </section>
+
+                    <section class="indent">
+                        <h4>
+                            Constructors
+                        </h4>
+                    
+                        <p>
+                            The constructors of <code>GenericEnum</code>, their arguments and the key properties that they set.
+                        </p>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                protected GenericEnum(dynamic? internalValue)
+                            </h5>
+                        
+                            <p>
+                                <strong>HasValue</strong>: true.
+                            </p>
+                            <p>
+                                <strong>InternalValue</strong>: internalValue.
+                            </p>
+                        </section>
+                    </section>
+
+                    <section class="indent">
+                        <h4>
+                            Instance Methods
+                        </h4>
+                    
+                        <p>
+                            The instance methods of <code>GenericEnum</code>, their arguments and what they do.
+                        </p>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public bool HasFlag(GenericEnum other)
+                            </h5>
+                            <p>
+                                Determines whether the ValueSet of <code>this</code> is a superset of the ValueSet of <code>other</code>.
+                                Works like the HasFlag method of the standard enum type.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public bool Equals(GenericEnum? other)
+                            </h5>
+                            <p>
+                                Determines whether <code>this</code> and <code>other</code> are equal.
+                                The equality is based on the equlity comparison of the underlying value.
+                            </p>
+                        </section>
+                    </section>
+                </section>
+
+                <section class="indent">
+                    <h3>GenericEnumBase&lt;T, TValue&gt;</h3>
+                    <p>
+                        <code>GenericEnumBase&lt;T, TValue&gt;</code> is the base class which all custom GenericEnums should inherit.
+                        <code>T</code> is the type of the custom GenericEnum and <code>TValue</code> is the type of the underlying value. 
+                        This class inherits <code>GenericEnum</code> and <code>GenericEnumValue&lt;TValue&gt;</code>.
+                    </p>
+
+                    <section class="indent">
+                        <h4>
+                            Properties
+                        </h4>
+                
+                        <p>
+                            <code>GenericEnumBase&lt;T, TValue&gt;</code> does not have any properties (not including inherited).
+                        </p>
+                    </section>
+
+                    <section class="indent">
+                        <h4>
+                            Constructors
+                        </h4>
+                    
+                        <p>
+                            The constructors of <code>GenericEnumBase&lt;T, TValue&gt;</code>, their arguments and the key properties that they set.
+                        </p>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                protected GenericEnumBase(TValue value)
+                            </h5>
+                        
+                            <p>
+                                <strong>value</strong>: The underlying value.
+                            </p>
+                        </section>
+                    </section>
+                </section>
+
+                <section class="indent">
+                    <h3>CshtmlComponentReferenceableBase&lt;ReferencableComponentType&gt;</h3>
+                    <p>
+                        <code>CshtmlComponentReferenceableBase</code> is the base class which components that
+                        require reference capturing should inherit. This is not the default behavior due to the
+                        slightly unorthodox inheritance syntax. For example, if you define the component "Box",
+                        then in the class declaration you must use this syntax: 
+                        <pre><code>public class Box : CshtmlComponentReferenceableBase&lt;Box&gt;</code></pre>
+                        The class inherits <code>CshtmlComponentBase</code> and all of its functionality.
+                    </p>
+                
+                    <section class="indent">
+                        <h4>
+                            Properties
+                        </h4>
+                
+                        <p>
+                            The properties of <code>CshtmlComponentReferenceableBase&lt;ReferencableComponentType&gt;</code> (not including inherited).
+                        </p>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                Reference
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: CshtmlComponentReferenceableBase&lt;ReferencableComponentType&gt;
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: null
+                            </p>
+                            <p>
+                                <strong>Description</strong>: A property that allows you to capture the reference to a component from a .cshtml file.
+                                Useful if, for example, one must access an id that another component defines. See the Advanced Example for how to accomplish
+                                this.
+                            </p>
+                        </section>
+                    </section>
+                
+                    <section class="indent">
+                        <h4>
+                            Constructors
+                        </h4>
+                
+                        <p>
+                            The constructors of <code>CshtmlComponentReferenceableBase&lt;ReferencableComponentType&gt;</code> are exactly the same as those of
+                            <code>CshtmlComponentBase</code>.
+                        </p>
+                    </section>
+                </section>
+
+                <section class="indent">
+                    <h3>CshtmlHead</h3>
+                    <p>
+                        <code>CshtmlHead</code> allows one to inject content in to the <code>head</code> tag of a document. By default,
+                        only one <code>CshtmlHead</code> tag is supported per component, but this can be overridden with the use of attributes.
+                        Note that instantiating multiple components of the same type will not render the content of a <code>CshtmlHead</code> tag
+                        multiple times, unless explicitly specified.
+                    </p>
+
+                    <section class="indent">
+                        <h4>
+                            Attributes
+                        </h4>
+
+                        <p>
+                            The attributes of <code>CshtmlHead</code>.
+                        </p>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                Key
+                            </h5>
+
+                            <p>
+                                <strong>Type</strong>: string
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: ""
+                            </p>
+                            <p>
+                                <strong>Description</strong>: Sets a key for the tag. Multiple <code>CshtmlHead</code> tags with unique keys are supported per component.
+                                Only the first <code>CshtmlHead</code> tag with a unique key is rendered (within the context of a component).
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                Multiple
+                            </h5>
+                        
+                            <p>
+                                <strong>Type</strong>: bool
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: false
+                            </p>
+                            <p>
+                                <strong>Description</strong>: If true, then renders the content of a <code>CshtmlHead</code> tag, even if the key is not unique. Additionally,
+                                if true, then instantiating multiple components of the same type in a request will render the content of a <code>CshtmlHead</code> tag multiple 
+                                times. This feature should almost never be used.                                
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                ContentOrder
+                            </h5>
+                        
+                            <p>
+                                <strong>Type</strong>: int
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: int.MaxValue
+                            </p>
+                            <p>
+                                <strong>Description</strong>: Sets the order of <code>CshtmlHead</code> tags. The content of <code>CshtmlHead</code> tags
+                                with negative values are prepended to the document <code>head</code> element, so that the most negative ones are rendered first. 
+                                The content of <code>CshtmlHead</code> tags with positive values (including zero) are appended to the document <code>head</code>
+                                element, so that the least positive ones are rendered first. The default behavior will append everything to the <code>head</code>
+                                element. Useful if certain components require, for example, the JS of other components. One component should in most cases 
+                                use only one ContentOrder. 
+                            </p>
+                        </section>
+                    </section>
+
+                    <section class="indent">
+                        <h4>
+                            CshtmlHead Ordering Example
+                        </h4>
+
+                        <p>
+                            An example that shows how <code>CshtmlHead</code> affects the content of the <code>head</code> element.
+                        </p>
+
+                        <pre><code id="cshtml-head-ordering-example-code"></code></pre>
+                    </section>
+                </section>
+
+                <section class="indent">
+                    <h3>CshtmlBody</h3>
+                    <p>
+                        <code>CshtmlBody</code> allows one to inject content in to the <code>body</code> tag of a document. By default,
+                        only one <code>CshtmlBody</code> tag is supported per component, but this can be overridden with the use of attributes.
+                        Note that instantiating multiple components of the same type will not render the content of a <code>CshtmlBody</code> tag
+                        multiple times, unless explicitly specified.
+                    </p>
+                
+                    <section class="indent">
+                        <h4>
+                            Attributes
+                        </h4>
+                
+                        <p>
+                            The attributes of <code>CshtmlBody</code>.
+                        </p>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                Key
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: string
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: ""
+                            </p>
+                            <p>
+                                <strong>Description</strong>: Sets a key for the tag. Multiple <code>CshtmlBody</code> tags with unique keys are supported per component.
+                                Only the first <code>CshtmlBody</code> tag with a unique key is rendered (within the context of a component).
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                Multiple
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: bool
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: false
+                            </p>
+                            <p>
+                                <strong>Description</strong>: If true, then renders the content of a <code>CshtmlBody</code> tag, even if the key is not unique. Additionally,
+                                if true, then instantiating multiple components of the same type in a request will render the content of a <code>CshtmlBody</code> tag multiple
+                                times. This feature should almost never be used.
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                ContentOrder
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: int
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: int.MaxValue
+                            </p>
+                            <p>
+                                <strong>Description</strong>: Sets the order of <code>CshtmlBody</code> tags. The content of <code>CshtmlBody</code> tags
+                                with negative values are prepended to the document <code>body</code> element, so that the most negative ones are rendered first.
+                                The content of <code>CshtmlBody</code> tags with positive values (including zero) are appended to the document <code>body</code>
+                                element, so that the least positive ones are rendered first. The default behavior will append everything to the <code>body</code>
+                                element. Useful if certain components require, for example, the JS of other components. One component should in most cases
+                                use only one ContentOrder.
+                            </p>
+                        </section>
+                    </section>
+                
+                    <section class="indent">
+                        <h4>
+                            CshtmlBody Ordering Example
+                        </h4>
+                        
+                        <p>
+                            An example that shows how <code>CshtmlBody</code> affects the content of the <code>head</code> element.
+                        </p>
+                        
+                        <pre><code id="cshtml-body-ordering-example-code"></code></pre>
+                    </section>
+                </section>
+
+                <section class="indent">
+                    <h3>CshtmlInitial</h3>
+                    <p>
+                        <code>CshtmlInitial</code> allows one to inject one-off content in to a component. By default,
+                        only one <code>CshtmlInitial</code> tag is supported per component, but this can be overridden with the use of attributes.
+                        Note that instantiating multiple components of the same type will not render the content of a <code>CshtmlInitial</code> tag
+                        multiple times, unless explicitly specified.
+                    </p>
+                
+                    <section class="indent">
+                        <h4>
+                            Attributes
+                        </h4>
+                
+                        <p>
+                            The attributes of <code>CshtmlInitial</code>.
+                        </p>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                Key
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: string
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: ""
+                            </p>
+                            <p>
+                                <strong>Description</strong>: Sets a key for the tag. Multiple <code>CshtmlInitial</code> tags with unique keys are supported per component.
+                                Only the first <code>CshtmlInitial</code> tag with a unique key is rendered (within the context of a component).
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                Multiple
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: bool
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: false
+                            </p>
+                            <p>
+                                <strong>Description</strong>: If true, then renders the content of a <code>CshtmlInitial</code> tag, even if the key is not unique. Additionally,
+                                if true, then instantiating multiple components of the same type in a request will render the content of a <code>CshtmlInitial</code> tag multiple
+                                times. This feature should almost never be used.
+                            </p>
+                        </section>
+                    </section>
+                </section>
+
+                <section class="indent">
+                    <h3>CshtmlSlot</h3>
+                    <p>
+                        <code>CshtmlSlot</code> allows one to specify named slots. The parent component then
+                        decides where this content is rendered. Can be inherited to create typed slots. Typed slots 
+                        do not require the specification of the Name attribute, which improves maintenance. 
+                    </p>
+                
+                    <section class="indent">
+                        <h4>
+                            Attributes
+                        </h4>
+                
+                        <p>
+                            The attributes of <code>CshtmlSlot</code>.
+                        </p>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                Name
+                            </h5>
+                
+                            <p>
+                                <strong>Type</strong>: string
+                            </p>
+                            <p>
+                                <strong>Default Value</strong>: ""
+                            </p>
+                            <p>
+                                <strong>Description</strong>: The name of the slot. The content of the slot is stored in a dictionary, where
+                                Name is the key. Components that implement slots, should then render this content in an appropriate place.
+                            </p>
+                        </section>
+                    </section>
+                </section>
+
+            </section>
+
+            <section>
+                <h2 class="scroll-anchor" id="usage">
+                    Usage
+                </h2>
+                
+                <p>
+                    This section documents how <strong>CshtmlComponent</strong> should be installed and how to author custom components.
+                </p>
+
+                <section class="indent">
+                    <h3>
+                        Installation & Initialization
+                    </h3>
+                    <p>
+                        <ol>
+                            <li>
+                                Install the <a href="https://www.nuget.org/packages/Acmion.CshtmlComponent/">Nuget package</a>.
+                            </li>
+                            <li>
+                                Dependency inject some classes in <code>Startup.cs</code>:
+                                <pre><code id="dependency-injection-code"></code></pre>
+                            </li>
+                            <li>
+                                In an appropriate <code>_ViewImports.cshtml</code> (usually located directly under the <code>Pages</code> 
+                                directory) add the following:
+                                <pre><code id="view-imports-code"></code></pre>
+                            </li>
+                        </ol>
+                    </p>
+                </section>
+
+                <section class="indent">
+                    <h3>
+                        Authoring Custom CshtmlComponents
+                    </h3>
+                    <p>
+                        <ol>
+                            <li>
+                                Create the file <code>ExampleComponent.cshtml.cs</code> somewhere under your ASP.NET Core Project (usually 
+                                under the <code>Pages</code> or <code>View</code> directory, but anything should work).
+                            </li>
+                            <li>
+                                Create the file <code>ExampleComponent.cshtml</code> in the same location.
+                            </li>
+                            <li>
+                                In <code>ExampleComponent.cs</code>:
+                                <ol>
+                                    <li>
+                                        Inherit <code>CshtmlComponentBase</code>. If you want to capture the reference to this component, then you
+                                        should instead inherit <code>CshtmlComponentReferenceableBase&lt;ExampleComponent&gt;</code>. No other changes
+                                        necessary.
+                                    </li>
+                                    <li>
+                                        Implement one of the constructor so that all arguments are dependency injected arguments. In most cases,
+                                        it is enough that <code>IHtmlHelper htmlHelper</code> is the only argument. 
+                                    </li>
+                                    <li>
+                                        Add <code>[HtmlTargetElement("ExampleComponentTag")]</code> to the component class, where
+                                        <code>ExampleComponentTag</code> is the tag that the component will be associated with.
+                                    </li>
+                                    <li>
+                                        Optionally, specify how the tag should be closed in <code>HtmlTargetElement</code>, see more about how this
+                                        is achieved in the <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/tag-helpers/authoring">TagHelper docs</a>.
+                                    </li>
+                                    <li>
+                                        List all component attributes as C# properties. ASP.NET Core will translate the properties to their kebabcased
+                                        variants, unless otherwise specified with <code>[HtmlAttributeName("AttributeName")]</code>, where
+                                        <code>AttributeName</code> is the name of the attribute.
+                                    </li>
+                                    <li>
+                                        Create fields or properties for all other values you wish to use in <code>ExampleComponent.cshtml</code>.
+                                    </li>
+                                    <li>
+                                        Optionally, override <code>protected virtual Task ProcessComponent()</code>, which is called before
+                                        <code>ExampleComponent.cshtml</code> is executed. Here you can extract information from properties and
+                                        access other fields etc. This can not be done in the constructor, since any provided properties
+                                        will not have been set yet. The nested child content can be accessed in this method by accessing
+                                        <code>ChildContent</code>. The named slots can be accessed by accessing <code>NamedSlots</code>
+                                    </li>
+                                </ol>
+                            </li>
+                            <li>
+                                In <code>ExampleComponent.cshtml</code>:
+                                <ol>
+                                    <li>
+                                        Set the model to <code>ExampleComponent</code> with <code>@model ExampleComponent</code>. You may need to
+                                        add appropriate using statements.
+                                    </li>
+                                    <li>
+                                        Component properties and field are accessible with <code>Model.PropertyName</code>.
+                                    </li>
+                                    <li>
+                                        The nested child content can be accessed with <code>Model.ChildContent</code>. To render the child content,
+                                        you can use <code>Html.Raw(Model.ChildContent)</code>, but note that this does not encode the HTML, which means
+                                        that XSS attacks are possible if non-validated user input is used as child content.
+                                    </li>
+                                    <li>
+                                        Any named slots can be accessed with <code>Model.NamedSlots</code>. To render the slot content,
+                                        you can use <code>Html.Raw(Model.NamedSlots["SlotName"])</code>, but note that this does not encode the HTML, which means
+                                        that XSS attacks are possible if non-validated user input is used as child content. The named slots have to be defined, in
+                                        the initializing context, with <code>&lt;CshtmlSlot Name="SlotName"&gt;[CONTENT HERE]&lt;CshtmlSlot&gt;</code> or by using
+                                        typed slots. See the advanced example in <a href="#examples">Examples</a>.
+                                    </li>
+                                    <li>
+                                        Use <code>&lt;CshtmlHead&gt;[CONTENT HERE]&lt;CshtmlHead&gt;</code>,
+                                        <code>&lt;CshtmlBody&gt;[CONTENT HERE]&lt;CshtmlBody&gt;</code> and
+                                        <code>&lt;CshtmlInitial&gt;[CONTENT HERE]&lt;CshtmlInitial&gt;</code> 
+                                        to render or inject content according to the rules in <a href="#components">Components</a>. 
+                                    </li>
+                                    <li>
+                                        Render your markup and use <code>.cshtml</code> files as you wish.
+                                    </li>
+                                </ol>
+                            </li>
+                        </ol>
+                    </p>
+                </section>
+
+                <section class="indent">
+                    <h3>
+                        Notes
+                    </h3>
+                    <p>
+                        <ul>
+                            <li>
+                                See the sample project in the <a href="https://github.com/Acmion/CshtmlComponent.git">CshtmlComponent GitHub repository</a> for concrete
+                                examples.
+                            </li>
+                            <li>
+                                A CshtmlComponent is just a TagHelper with some "magic". In practice, everything that applies to
+                                ASP.NET Core TagHelpers apply to CshtmlComponents.
+                            </li>
+                            <li>
+                                The entire CshtmlComponent is passed as Model to the <code>.cshtml</code> file. This includes properties
+                                inherited from TagHelper.
+                            </li>
+                        </ul>
+                    </p>
+                </section>
+            </section>
+
+            <section>
+                <h2 class="scroll-anchor" id="change-log">
+                    Changelog
+                </h2>
+
+                <section>
+                    <h4>
+                        V3.1.0
+                    </h4>
+                    <a href="/v3.1.0/">
+                        V3.1.0 Documentation
+                    </a>
+                    <p>
+                        Published: Oct 30, 2020
+                    </p>
+                    <p>
+                        Added constructors to <code>CshtmlComponentBase</code> and <code>CshtmlComponentReferenceableBase</code> to make development more convenient.
+                        The main change was that from now on the path to the associated .cshtml file can be automatically generated by analyzing the namespace and
+                        class name. This improves code maintainability and reduces unnecessary bugs. The path to the associated .csthml file can still be defined manually.
+                    </p>
+                </section>
+
+                <section>
+                    <h4>
+                        V3.0.0
+                    </h4>
+                    <a href="/v3.0.0/">
+                        V3.0.0 Documentation
+                    </a>
+                    <p>
+                        Published: Oct 11, 2020
+                    </p>
+                    <p>
+                        Breaking changes. Added support for head and body content injection with <code>CshtmlHead</code> and <code>CshtmlBody</code>.
+                        Rewrote <code>CshtmlInitial</code> to no longer depend on the obsolete <code>Context</code> attribute. Upgrading from a 
+                        previous version should only minimally affect previous usage of <code>CshtmlInitial</code> (might even in most cases work
+                        without any changes). Additionally, slight changes in dependency injection (Startup.cs).
+                    </p>
+                </section>
+
+                <section>
+                    <h4>
+                        V2.2.0
+                    </h4>
+                    <a href="/v2.2.0/">
+                        V2.2.0 Documentation
+                    </a>
+                    <p>
+                        Published: Sep 26, 2020
+                    </p>
+                    <p>
+                        Added support component reference capturing. This grants access to component properties outside
+                        the components own context. See the Razor code in <a href="#example">Example</a> for an example 
+                        of how this is done. Note: This feature must be enabled at a component level.
+                    </p>
+                </section>
+
+                <section>
+                    <h4>
+                        V2.1.0
+                    </h4>
+                    <a href="/v2.1.0/">
+                        V2.1.0 Documentation
+                    </a>
+                    <p>
+                        Published: Sep 20, 2020
+                    </p>
+                    <p>
+                        Added support for <code>CshtmlInitial</code>, which allows component code be rendered once
+                        per request, regardless of the number of instantiated components.
+                    </p>
+                </section>
+
+                <section>
+                    <h4>
+                        V2.0.0
+                    </h4>
+                    <a href="/v2.0.0/">
+                        V2.0.0 Documentation
+                    </a>
+                    <p>
+                        Published: Sep 19, 2020
+                    </p>
+                    <p>
+                        Breaking changes. Added support for named slots and added tag helper context and output as arguments 
+                        to <code>ProcessComponent</code>.
+                    </p>
+                </section>
+
+                <section>
+                    <h4>
+                        V1.1.0
+                    </h4>
+                    <a href="/v1.1.0/">
+                        V1.1.0 Documentation
+                    </a>
+                    <p>
+                        Published: Sep 17, 2020
+                    </p>
+                    <p>
+                        Added support for <code>TagMode</code>, which provides some extra customizability.
+                    </p>
+                </section>
+
+                <section>
+                    <h4>
+                        V1.0.0
+                    </h4>
+                    <a href="/v1.0.0/">
+                        V1.0.0 Documentation
+                    </a>
+                    <p>
+                        Published: Sep 15, 2020
+                    </p>
+                    <p>
+                        The initial release.
+                    </p>
+                </section>
+            
+            
+            </section>
+
+            <section>
+                <h2 class="scroll-anchor" id="credits">
+                    Credits
+                </h2>
+
+                <p>
+                    CshtmlComponent was developed by <a href="https://acmion.com">Acmion</a> <a href="https://github.com/Acmion">(GitHub)</a>.
+                </p>
+
+                <p>
+                    Contribute to CshtmlComponent in it's <a href="https://github.com/Acmion/CshtmlComponent">GitHub repository</a>.
+                </p>
+            
+            </section>
+        </main>
+
+        <div style="height: 200px"></div>
+        <div>
+            <script>
+                async function loadExamples()
+                {
+                    var cshtmlComponentCodeFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/ExampleComponent.cshtml.cs");
+                    var cshtmlComponentCshtmlFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/ExampleComponent.cshtml");
+                    var cshtmlComponentInstantiationFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/ExampleComponentInstantiation.cshtml");
+
+                    var cshtmlComponentAdvancedCodeFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/AdvancedExampleComponent.cshtml.cs");
+                    var cshtmlComponentAdvancedCshtmlFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/AdvancedExampleComponent.cshtml");
+                    var cshtmlComponentAdvancedInstantiationFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/AdvancedExampleComponentInstantiation.cshtml");
+
+                    var cshtmlComponentCode = await (await cshtmlComponentCodeFetch).text();
+                    var cshtmlComponentCshtml = await (await cshtmlComponentCshtmlFetch).text();
+                    var cshtmlComponentInstantiation = await (await cshtmlComponentInstantiationFetch).text();
+
+                    var cshtmlComponentAdvancedCode = await (await cshtmlComponentAdvancedCodeFetch).text();
+                    var cshtmlComponentAdvancedCshtml = await (await cshtmlComponentAdvancedCshtmlFetch).text();
+                    var cshtmlComponentAdvancedInstantiation = await (await cshtmlComponentAdvancedInstantiationFetch).text();
+
+                    document.getElementById("basic-example-code").innerText = cshtmlComponentCode;
+                    document.getElementById("basic-example-cshtml-code").innerText = cshtmlComponentCshtml;
+                    document.getElementById("basic-example-instantiation-code").innerText = cshtmlComponentInstantiation;
+
+                    document.getElementById("advanced-example-code").innerText = cshtmlComponentAdvancedCode;
+                    document.getElementById("advanced-example-cshtml-code").innerText = cshtmlComponentAdvancedCshtml;
+                    document.getElementById("advanced-example-instantiation-code").innerText = cshtmlComponentAdvancedInstantiation;
+                }
+
+                async function loadComponents()
+                {
+                    var cshtmlHeadCodeFetch = fetch("/Web/examples/cshtml-head-ordering-example-code.html");
+                    var cshtmlBodyCodeFetch = fetch("/Web/examples/cshtml-body-ordering-example-code.html");
+
+                    var cshtmlHeadCode = await (await cshtmlHeadCodeFetch).text();
+                    var cshtmlBodyCode = await (await cshtmlBodyCodeFetch).text();
+
+                    document.getElementById("cshtml-head-ordering-example-code").innerText = cshtmlHeadCode;
+                    document.getElementById("cshtml-body-ordering-example-code").innerText = cshtmlBodyCode;
+
+                }
+
+                async function loadUsage()
+                {
+                    var dependencyInjcetionCodeFetch = fetch("/Web/examples/dependency-injection-code.txt");
+                    var viewImportsCodeFetch = fetch("/Web/examples/view-imports-code.txt");
+
+                    var dependencyInjcetionCode = await (await dependencyInjcetionCodeFetch).text();
+                    var viewImportsCode = await (await viewImportsCodeFetch).text();
+
+                    document.getElementById("dependency-injection-code").innerText = dependencyInjcetionCode;
+                    document.getElementById("view-imports-code").innerText = viewImportsCode;
+
+                }
+
+                loadExamples();
+                loadComponents();
+                loadUsage();
+            </script>
+        </div>
+    </body>
+</html>

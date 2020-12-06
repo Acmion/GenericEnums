@@ -35,6 +35,9 @@ namespace Acmion.GenericEnums
         }
         protected GenericEnumBase(TValue value) : base(value) 
         {
+            // Create dict to fix BitValue problem with two enums of same underlying value!
+
+            var a 
             BitValue = 1UL << (Interlocked.Increment(ref InstantiatedCount) - 1);
 
             if (InstantiatedCount >= 64) 
