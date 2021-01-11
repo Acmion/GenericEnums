@@ -1,5 +1,0 @@
-// Built in CshtmlComponent components.
-@addTagHelper *, Acmion.CshtmlComponent
-
-// Components defined in your project.
-@addTagHelper *, YourProjectName

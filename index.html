@@ -30,7 +30,7 @@
         <link rel="stylesheet" href="https://cdn.acmion.com/acmion/hyper-nav/dist/hyper-nav-default.min.css" />
 
         <!-- Custom -->
-        <link rel="stylesheet" href="/Web/css/main.css" />
+        <link rel="stylesheet" href="/+/css/main.css" />
     </head>
     <body>
         <header>
@@ -90,7 +90,7 @@
                             </a>
                         </div>
                         <div class="hn-item">
-                            <a class="hn-link" href="#performance">
+                            <a class="hn-link" href="#usage">
                                 <span class="hn-content">
                                     Usage
                                 </span>
@@ -147,7 +147,7 @@
                 <p>
                     <strong>Install the <a href="https://www.nuget.org/packages/Acmion.GenericEnums/">Nuget package</a>.</strong>
                     <br />
-                    <strong>See more detailed <a href="#usage">Usage & Installation instructions</a></strong>.
+                    <strong>See more detailed <a href="#usage">Usage instructions</a></strong>.
                 </p>
                 
             
@@ -168,13 +168,10 @@
                                         Comparison Between Different Types
                                     </li>
                                     <li>
-                                        Operator Overloads
+                                        Operators
                                     </li>
                                     <li>
-                                        Performant
-                                    </li>
-                                    <li>
-                                        Flexible
+                                        Performant Comparison
                                     </li>
                                 </ul>
                             </div>
@@ -194,13 +191,10 @@
                                         Comparison Between Different Types
                                     </li>
                                     <li>
-                                        Operator Overloads
+                                        Operators
                                     </li>
                                     <li>
-                                        Performant
-                                    </li>
-                                    <li class="feature-not-enabled">
-                                        Flexible
+                                        Performant Comparison
                                     </li>
                                 </ul>
                             </div>
@@ -227,17 +221,57 @@
                         Important Features and Restrictions
                     </h3>
                     <p>
-                        This section is a summary of the most important features and restrictions of GenericEnum. The same information is also 
-                        described under <a href="#core">Core</a>, but it may get lost under the other stuff. 
+                        This section is a summary of the most important features and restrictions of GenericEnum. Make sure that 
+                        you understand these before applying GenericEnum in your own project.
                     </p>
                     <section class="indent p-no-margin">
                         <h4>
-                            Maximum Number of Values
+                            Defining a Custom GenericEnum
                         </h4>
                         <p>
-                            Currently, the maximum number of value that a GenericEnum can define is 64. The restriction is based 
-                            upon the number of bits in an <code>ulong</code>. Storing a "bitflag" makes the comparison of two GenericEnums 
-                            of the same type blazingly fast. This may be relaxed in a later release.
+                            When defining a custom GenericEnum, you should always inherit <code>GenericEnumBase&lt;T, TValue&gt;</code> and 
+                            not <code>GenericEnum</code> or <code>GenericEnumValue&lt;TValue&gt;</code>. These "extra" classes are required
+                            for cases in which different types are compared.
+                        </p>
+                    </section>
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Maximum Number of Distinct Values
+                        </h4>
+                        <p>
+                            Currently, the maximum number of distinct values that a GenericEnum can define is 64. However, if 
+                            the underlying value type can be <code>null</code> (in other words, the underlying value is a class), 
+                            then one value is reserved for <code>null</code>. The restriction is based upon the number of bits in 
+                            an <code>ulong</code>. Storing a "bitflag" makes the comparison of two GenericEnums of the same type 
+                            really fast. This limitation may be relaxed in a later release.
+                        </p>
+                    </section>
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Underlying InternalValue
+                        </h4>
+                        <p>
+                            A GenericEnum has an <code>InternalValue</code> property if and only if it was explicitly instantiated with one. 
+                            Check for this with the property <code>HasValue</code>.
+                        </p>
+                    </section>
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Underlying ValueSet
+                        </h4>
+                        <p>
+                            Every GenericEnum has an underlying <code>ValueSet</code> property, which is a set of GenericEnums. This set contains 
+                            all associated values of a GenericEnum. If the underlying <code>InternalValue</code> is defined, then its corresponding 
+                            GenericEnum is also contained here. For example, applying the union operator on 1 and 2, will result in {1, 2}.
+                        </p>
+                    </section>
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Underlying Value
+                        </h4>
+                        <p>
+                            GenericEnums whose type can explicitly be defined can have a <code>Value</code> property. This is just <code>InternalValue</code> 
+                            correctly casted to its true type. A GenericEnum can have a <code>Value</code> property if and only if <code>HasValue</code> is true.
                         </p>
                     </section>
                     <section class="indent p-no-margin">
@@ -245,25 +279,64 @@
                             Equality
                         </h4>
                         <p>
-                            The equality of two GenericEnums is based on the equality of the underlying value.
+                            The equality of two GenericEnums is based on the equality of the underlying <code>ValueSet</code>.
                             In other words, the equality is (in practice) defined as: 
-                            <code>GenericEnum0.Value.Equals(GenericEnum1.Value)</code>,
-                            which can then be based on reference or value or something else. For example, if one GenericEnum has 
-                            a Value of <code>1</code> (type: int) and another has a Value of <code>1.0</code> (type: double), then 
-                            due to .NET equality conventions this will evaluate to true.
+                            <code>GenericEnum0.ValueSet.SetEquals(GenericEnum1.ValueSet)</code>, where the individual GenericEnums are 
+                            then compared with <code>A.InternalValue.Equals(B.InternalValue)</code>. The comparison of <code>InternalValues</code>
+                            can then be based on reference or value or something else. For example, if one GenericEnum has 
+                            an <code>InternalValue</code> of <code>1</code> (type: int) and another has an <code>InternalValue</code> of <code>1.0</code> 
+                            (type: double), then due to .NET equality conventions this will evaluate to <code>true</code>.
                         </p>
                     </section>
-                    
                     <section class="indent p-no-margin">
                         <h4>
-                            Value Mutability
+                            InternalValue Mutability
                         </h4>
                         <p>
-                            The Value of a GenericEnum can not be changed outside the constructor. However, since the Value
-                            can be of any type, for example, a custom class, the underlying state may be changed. Changing the  
+                            The <code>InternalValue</code> of a GenericEnum can not be changed. However, since the <code>InternalValue</code>
+                            can be of any type, for example, a custom class, the its state may be changed. Changing the  
                             underlying state (especially if it affects equality comparisons) is forbidden and will probably result
                             in incorrect GenericEnum behavior. Unfortunately, this can not be enforced and no actual errors can 
                             be generated. 
+                        </p>
+                    </section>
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Instantiation & Constructor Visibility
+                        </h4>
+                        <p>
+                            When creating a custom GenericEnum (works with inheritance), the constructor should be marked either 
+                            <code>private</code> or <code>protected</code>. It does not make sense to generate GenericEnums during 
+                            runtime outside the initialization phase. Distinct GenericEnums should be created as static fields or 
+                            properties within the class itself. All static fields and properties of the same type as the custom 
+                            GenericEnum will then be stored within the static property <code>Values</code>. See the examples below for more details. 
+                        </p>
+                    </section>
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Resulting Type After Applied Operator
+                        </h4>
+                        <p>
+                            GenericEnum allows one to apply operators on different types. The resulting type after each operator 
+                            is the one that contains the most information. If an operator is applied on two GenericEnums of the 
+                            same type, then the result is also of the same type. If an operator is applied on two GenericEnums 
+                            of different types, but with the same underlying value type, then the information of the underlying 
+                            value type is maintained. However, if an operator is applied on two GenericEnums of different types 
+                            with different underlying value type, then the resulting type won't maintain any information about 
+                            types. See the section about operators under <a href="#examples">Examples</a> for examples.
+                        </p>
+                    </section>
+                    <section class="indent p-no-margin">
+                        <h4>
+                            Performance
+                        </h4>
+                        <p>
+                            The performance of GenericEnum is optimized for the case of comparison. Comparing two GenericEnums 
+                            of the same type is really fast (basically as fast as comparing two ulongs). However, comparisons 
+                            of different types are slower, as in those cases two HashSets are compared. Applying operators on 
+                            GenericEnums of the same type is slightly slower than creating a new object. However, applying 
+                            operators on GenericEnums of different types is slower, as in those cases the operators is in 
+                            fact applied on HashSets. I might sometime give concrete performance analysis numbers.   
                         </p>
                     </section>
                 </section>
@@ -275,69 +348,104 @@
                 </h2>
 
                 <p>
-                    This section contains examples of how CshtmlComponents can be coded.
+                    This section contains examples of how GenericEnum works.
                 </p>
 
                 <section class="indent">
                     <h3 style="margin-top: 0">
-                        Basic Example
+                        Basic Examples
                     </h3>
                     
                     <p>
-                        A basic CshtmlComponent that features <strong>attributes</strong> and <strong>child content</strong>.
+                        Basic GenericEnums.
                     </p>
                     
                     <section class="indent">
                         <h4>
-                            C# Code (ExampleComponent.cshtml.cs)
+                            GenericEnum With <code>int</code> as the Underlying Value Type
                         </h4>
-                        <pre><code id="basic-example-code"></code></pre>
+                        <pre><code data-file="/Source/GenericEnumsDemo/GenericEnumTypes/FirstInt.cs"></code></pre>
 
                         <h4>
-                            Cshtml Code (ExampleComponent.cshtml)
+                            GenericEnum With <code>double</code> as the Underlying Value Type
                         </h4>
-                        <pre><code id="basic-example-cshtml-code"></code></pre>
+                        <pre><code data-file="/Source/GenericEnumsDemo/GenericEnumTypes/FirstDouble.cs"></code></pre>
 
                         <h4>
-                            Component Instantiation
+                            GenericEnum With <code>string?</code> as the Underlying Value Type
                         </h4>
-                        <pre><code id="basic-example-instantiation-code"></code></pre>
+                        <pre><code data-file="/Source/GenericEnumsDemo/GenericEnumTypes/CustomType.cs"></code></pre>
                     </section>
 
                 </section>
 
                 <section class="indent">
                     <h3 style="margin-top: 0">
-                        Advanced Example
+                        Operators
                     </h3>
                 
                     <p>
-                        An advanced CshtmlComponent that features <strong>attributes</strong>, <strong>child content</strong>, 
-                        <strong>named slots</strong>, <strong>typed slots</strong>, <strong>reference capturing</strong>, 
-                        <strong>head content injection</strong>, <strong>body content injection</strong>, 
-                        <strong>one-off content</strong> and <strong>model mutation</strong>.
+                        The supported operators of GenericEnum and what they do.
                     </p>
-
+                
                     <section class="indent">
                         <h4>
-                            C# Code (AdvancedExampleComponent.cshtml.cs)
+                            The Union Operator (|)
                         </h4>
-                        <pre><code id="advanced-example-code"></code></pre>
-                    
+                        <pre><code data-file="/Source/GenericEnumsDemo/Operators/UnionOperator.cs"></code></pre>
+                
                         <h4>
-                            Cshtml Code (AdvancedExampleComponent.cshtml)
+                            The Intersect Operator (&)
                         </h4>
-                        <pre><code id="advanced-example-cshtml-code"></code></pre>
-                    
+                        <pre><code data-file="/Source/GenericEnumsDemo/Operators/IntersectOperator.cs"></code></pre>
+                
                         <h4>
-                            Component Instantiation
+                            The Except Operator (-)
                         </h4>
-                        <pre><code id="advanced-example-instantiation-code"></code></pre>
+                        <pre><code data-file="/Source/GenericEnumsDemo/Operators/ExceptOperator.cs"></code></pre>
+                        
+                        <h4>
+                            The Symmetric Except Operator (^)
+                        </h4>
+                        <pre><code data-file="/Source/GenericEnumsDemo/Operators/SymmetricExceptOperator.cs"></code></pre>
+                        
+                        <h4>
+                            The Secondary Union Operator (+)
+                        </h4>
+                        <pre><code data-file="/Source/GenericEnumsDemo/Operators/SecondaryUnionOperator.cs"></code></pre>
+                        
+                        <h4>
+                            The Equality Operator (==)
+                        </h4>
+                        <pre><code data-file="/Source/GenericEnumsDemo/Operators/EqualityOperator.cs"></code></pre>
+
+                        <h4>
+                            The Inequality Operator (!=)
+                        </h4>
+                        <pre><code data-file="/Source/GenericEnumsDemo/Operators/InequalityOperator.cs"></code></pre>
+
                     </section>
                 
                 </section>
-                
 
+                <section class="indent">
+                    <h3 style="margin-top: 0">
+                        HashCode Calculation
+                    </h3>
+                
+                    <p>
+                        The basics of how HashCodes are calculated for GenericEnums. May have some implications in 
+                        certain applications, but should be just fine in most cases.
+                    </p>
+                
+                    <section class="indent">
+                        <h4>
+                            HashCode Calculation Examples
+                        </h4>
+                        <pre><code data-file="/Source/GenericEnumsDemo/Other/HashCodeDemo.cs"></code></pre>
+                    </section>
+                
+                </section>
             </section>
 
             <section>
@@ -352,13 +460,13 @@
                 <section class="indent">
                     <h3>GenericEnum</h3>
                     <p>
-                        <code>GenericEnum</code> is a class which all GenericEnums inherit. This class should neither be instantiated 
+                        <code>GenericEnum</code> is a class that should neither be instantiated 
                         nor be inherited directly, even if that is technically possible.
                     </p>
 
                     <section class="indent">
                         <h4>
-                            Properties
+                            Instance Properties
                         </h4>
                 
                         <p>
@@ -367,50 +475,41 @@
 
                         <section class="indent p-no-margin">
                             <h5>
-                                HasValue
+                                public bool HasValue
                             </h5>
                 
                             <p>
-                                <strong>Type</strong>: bool
-                            </p>
-                            <p>
-                                <strong>Description</strong>: A property that describes whether an instance of a GenericEnum was instantiated
+                                A property that describes whether an instance of a GenericEnum was instantiated
                                 with an explicit value or not. 
                             </p>
                         </section>
 
                         <section class="indent p-no-margin">
                             <h5>
-                                InternalValue
+                                public dynamic? InternalValue
                             </h5>
                 
                             <p>
-                                <strong>Type</strong>: dynamic?
-                            </p>
-                            <p>
-                                <strong>Description</strong>: A property that contains the underlying value of GenericEnum.
+                                A property that contains the underlying value of GenericEnum.
                             </p>
                         </section>
 
                         <section class="indent p-no-margin">
                             <h5>
-                                ValueSet
+                                public HashSet&lt;GenericEnum&gt; ValueSet
                             </h5>
                 
                             <p>
-                                <strong>Type</strong>: HashSet&lt;GenericEnum&gt; 
-                            </p>
-                            <p>
-                                <strong>Description</strong>: A property that contains all associated GenericEnums to an instance.
-                                For example, one can create the union of two GenericEnums and in that case ValueSet will contain them 
-                                both.
+                                A property that contains all associated GenericEnums to an instance. 
+                                For example, one can calculate the union of two GenericEnums and in that case ValueSet will contain them 
+                                both. 
                             </p>
                         </section>
                     </section>
 
                     <section class="indent">
                         <h4>
-                            Constructors
+                            Instance Constructors
                         </h4>
                     
                         <p>
@@ -423,10 +522,13 @@
                             </h5>
                         
                             <p>
-                                <strong>HasValue</strong>: true.
+                                <strong>HasValue</strong>: true
                             </p>
                             <p>
-                                <strong>InternalValue</strong>: internalValue.
+                                <strong>InternalValue</strong>: internalValue
+                            </p>
+                            <p>
+                                <strong>ValueSet</strong>: new HashSet&lt;GenericEnum&gt;() { this }
                             </p>
                         </section>
                     </section>
@@ -437,7 +539,7 @@
                         </h4>
                     
                         <p>
-                            The instance methods of <code>GenericEnum</code>, their arguments and what they do.
+                            The instance methods of <code>GenericEnum</code>, their arguments and what they do and return.
                         </p>
                     
                         <section class="indent p-no-margin">
@@ -452,27 +554,369 @@
 
                         <section class="indent p-no-margin">
                             <h5>
+                                public bool Equals(object? obj)
+                            </h5>
+                            <p>
+                                Determines whether <code>this</code> and <code>obj</code> are equal.
+                                The equality is based on the equality comparison of the underlying ValueSet.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
                                 public bool Equals(GenericEnum? other)
                             </h5>
                             <p>
                                 Determines whether <code>this</code> and <code>other</code> are equal.
-                                The equality is based on the equlity comparison of the underlying value.
+                                The equality is based on the equality comparison of the underlying ValueSet.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public string ToString()
+                            </h5>
+                            <p>
+                                Creates a string representation of a GenericEnum. Joins together all values from the ValueSet.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public int GetHashCode()
+                            </h5>
+                            <p>
+                                Gets the HashCode. The computation of the HashCode is somewhat expensive and so it is cached.
                             </p>
                         </section>
                     </section>
+
+                    <section class="indent">
+                        <h4>
+                            Static Properties
+                        </h4>
+                    
+                        <p>
+                            <code>GenericEnum</code> does not have any static properties.
+                        </p>
+                    </section>
+
+                    <section class="indent">
+                        <h4>
+                            Static Methods
+                        </h4>
+                    
+                        <p>
+                            The static methods of <code>GenericEnum</code>, their arguments and what they do and return.
+                        </p>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static IReadOnlyList&lt;GenericEnum&gt; GetValues(Type genericEnumType)
+                            </h5>
+                            <p>
+                                Gets all statically defined distinct GenericEnums of a specific type.
+                            </p>
+                        </section>
+                    
+                    </section>
+
+                    <section class="indent">
+                        <h4>
+                            Operators
+                        </h4>
+                    
+                        <p>
+                            The operators of <code>GenericEnum</code>, their arguments and what they do and return.
+                        </p>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static bool operator ==(GenericEnum genericEnum0, GenericEnum genericEnum1)
+                            </h5>
+                            <p>
+                                Determines whether two GenericEnums are equal.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static bool operator !=(GenericEnum genericEnum0, GenericEnum genericEnum1)
+                            </h5>
+                            <p>
+                                Determines whether two GenericEnums are not equal.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnum operator +(GenericEnum genericEnum0, GenericEnum genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the union operator on two GenericEnums. In essence, adds <code>genericEnum0.ValueSet</code>
+                                and <code>genericEnum1.ValueSet</code> together, but without duplicates.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnum operator -(GenericEnum genericEnum0, GenericEnum genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the except operator on two GenericEnums. In essence, the <code>genericEnum1.ValueSet</code>
+                                is removed from <code>genericEnum0.ValueSet</code>.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnum operator &(GenericEnum genericEnum0, GenericEnum genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the intersect operator on two GenericEnums. In essence, an intersection is calculated
+                                between <code>genericEnum0.ValueSet</code> and <code>genericEnum1.ValueSet</code>.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnum operator |(GenericEnum genericEnum0, GenericEnum genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the union operator on two GenericEnums. In essence, adds <code>genericEnum0.ValueSet</code>
+                                and <code>genericEnum1.ValueSet</code> together, but without duplicates.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnum operator ^(GenericEnum genericEnum0, GenericEnum genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the symmetric except operator on two GenericEnums. In essence, calculates the values
+                                that exist in <code>genericEnum0.ValueSet</code> or <code>genericEnum1.ValueSet</code>, but no both. 
+                                Commonly known as the XOR operator.
+                            </p>
+                        </section>
+                    
+                    </section>
                 </section>
+
+                <div class="p-4"></div>
+
+                <section class="indent">
+                    <h3>GenericEnumValue&lt;TValue&gt;</h3>
+                    <p>
+                        <code>GenericEnumValue&lt;TValue&gt;</code> is a class that should neither be instantiated
+                        nor be inherited directly, even if that is technically possible. Inherits <code>GenericEnum</code>.
+                        The type <code>TValue</code> is the type of the underlying value.
+                    </p>
+                
+                    <section class="indent">
+                        <h4>
+                            Instance Properties
+                        </h4>
+                
+                        <p>
+                            The properties of <code>GenericEnumValue&lt;TValue&gt;</code> (not including inherited).
+                        </p>
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public TValue? Value
+                            </h5>
+                
+                            <p>
+                                A property that contains the underlying value of GenericEnum, but correctly casted.
+                                The casting is done in the constructor, so the negative performance implications of boxing 
+                                are avoided. 
+                            </p>
+                        </section>
+                    </section>
+                
+                    <section class="indent">
+                        <h4>
+                            Instance Constructors
+                        </h4>
+                
+                        <p>
+                            The constructors of <code>GenericEnumValue&lt;TValue&gt;</code>, their arguments and the key properties that they set.
+                        </p>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                protected GenericEnumValue(TValue value)
+                            </h5>
+                
+                            <strong>Value</strong>: value
+                        </section>
+                    </section>
+                
+                    <section class="indent">
+                        <h4>
+                            Instance Methods
+                        </h4>
+                
+                        <p>
+                            The instance methods of <code>GenericEnumValue&lt;TValue&gt;</code>, their arguments and what they 
+                            do and return (not including inherited).
+                        </p>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public bool Equals(object? obj)
+                            </h5>
+                            <p>
+                                Determines whether <code>this</code> and <code>obj</code> are equal.
+                                The equality is based on the equality comparison of the underlying ValueSet.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public bool Equals(GenericEnum? other)
+                            </h5>
+                            <p>
+                                Determines whether <code>this</code> and <code>other</code> are equal.
+                                The equality is based on the equality comparison of the underlying ValueSet.
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public bool Equals(GenericEnum&lt;TValue&gt;? other)
+                            </h5>
+                            <p>
+                                Determines whether <code>this</code> and <code>other</code> are equal.
+                                The equality is based on the equality comparison of the underlying ValueSet.
+                            </p>
+                        </section>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public int GetHashCode()
+                            </h5>
+                            <p>
+                                Returns <code>base.GetHashCode()</code>.
+                            </p>
+                        </section>
+                    </section>
+                
+                    <section class="indent">
+                        <h4>
+                            Static Properties
+                        </h4>
+                    
+                        <p>
+                            <code>GenericEnumValue&lt;TValue&gt;</code> does not have any static properties.
+                        </p>
+                    </section>
+
+                    <section class="indent">
+                        <h4>
+                            Static Methods
+                        </h4>
+                
+                        <p>
+                            <code>GenericEnumValue&lt;TValue&gt;</code> does not have any static methods (not including inherited).
+                        </p>
+                    </section>
+                
+                    <section class="indent">
+                        <h4>
+                            Operators
+                        </h4>
+                
+                        <p>
+                            The operators of <code>GenericEnum&lt;TValue&gt;</code>, their arguments and what they do and return.
+                        </p>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static bool operator ==(GenericEnumValue&lt;TValue&gt; genericEnum0, GenericEnumValue&lt;TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Determines whether two GenericEnumValue&lt;TValue&gt; are equal.
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static bool operator !=(GenericEnumValue&lt;TValue&gt; genericEnum0, GenericEnumValue&lt;TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Determines whether two GenericEnumValue&lt;TValue&gt; are not equal.
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnumValue&lt;TValue&gt; operator +(GenericEnumValue&lt;TValue&gt; genericEnum0, GenericEnumValue&lt;TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the union operator on two GenericEnumValue&lt;TValue&gt;. In essence, adds <code>genericEnum0.ValueSet</code>
+                                and <code>genericEnum1.ValueSet</code> together, but without duplicates.
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnumValue&lt;TValue&gt; operator -(GenericEnumValue&lt;TValue&gt; genericEnum0, GenericEnumValue&lt;TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the except operator on two GenericEnumValue&lt;TValue&gt;. In essence, the <code>genericEnum1.ValueSet</code>
+                                is removed from <code>genericEnum0.ValueSet</code>.
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnumValue&lt;TValue&gt; operator &(GenericEnumValue&lt;TValue&gt; genericEnum0, GenericEnumValue&lt;TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the intersect operator on two GenericEnumValue&lt;TValue&gt;. In essence, an intersection is calculated
+                                between <code>genericEnum0.ValueSet</code> and <code>genericEnum1.ValueSet</code>.
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnumValue&lt;TValue&gt; operator |(GenericEnumValue&lt;TValue&gt; genericEnum0, GenericEnumValue&lt;TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the union operator on two GenericEnumValue&lt;TValue&gt;. In essence, adds <code>genericEnum0.ValueSet</code>
+                                and <code>genericEnum1.ValueSet</code> together, but without duplicates.
+                            </p>
+                        </section>
+                
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static GenericEnumValue&lt;TValue&gt; operator ^(GenericEnumValue&lt;TValue&gt; genericEnum0, GenericEnumValue&lt;TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the symmetric except operator on two GenericEnumValue&lt;TValue&gt;. In essence, calculates the values
+                                that exist in <code>genericEnum0.ValueSet</code> or <code>genericEnum1.ValueSet</code>, but no both.
+                                Commonly known as the XOR operator.
+                            </p>
+                        </section>
+                
+                    </section>
+                </section>
+
+                <div class="p-4"></div>
 
                 <section class="indent">
                     <h3>GenericEnumBase&lt;T, TValue&gt;</h3>
                     <p>
                         <code>GenericEnumBase&lt;T, TValue&gt;</code> is the base class which all custom GenericEnums should inherit.
                         <code>T</code> is the type of the custom GenericEnum and <code>TValue</code> is the type of the underlying value. 
-                        This class inherits <code>GenericEnum</code> and <code>GenericEnumValue&lt;TValue&gt;</code>.
+                        This class inherits <code>GenericEnum</code> and <code>GenericEnumValue&lt;TValue&gt;</code>. This class should be 
+                        inherited like this (int is the type of the underlying value in this case):
+                        <pre><code>public class MyGenericEnum : GenericEnumBase&lt;MyGenericEnum, int&gt; { ... }</code></pre>
                     </p>
 
                     <section class="indent">
                         <h4>
-                            Properties
+                            Instance Properties
                         </h4>
                 
                         <p>
@@ -482,7 +926,7 @@
 
                     <section class="indent">
                         <h4>
-                            Constructors
+                            Instance Constructors
                         </h4>
                     
                         <p>
@@ -491,331 +935,193 @@
                     
                         <section class="indent p-no-margin">
                             <h5>
-                                protected GenericEnumBase(TValue value)
+                                protected GenericEnumBase&lt;T, TValue&gt;(TValue value)
                             </h5>
-                        
                             <p>
-                                <strong>value</strong>: The underlying value.
-                            </p>
-                        </section>
-                    </section>
-                </section>
-
-                <section class="indent">
-                    <h3>CshtmlComponentReferenceableBase&lt;ReferencableComponentType&gt;</h3>
-                    <p>
-                        <code>CshtmlComponentReferenceableBase</code> is the base class which components that
-                        require reference capturing should inherit. This is not the default behavior due to the
-                        slightly unorthodox inheritance syntax. For example, if you define the component "Box",
-                        then in the class declaration you must use this syntax: 
-                        <pre><code>public class Box : CshtmlComponentReferenceableBase&lt;Box&gt;</code></pre>
-                        The class inherits <code>CshtmlComponentBase</code> and all of its functionality.
-                    </p>
-                
-                    <section class="indent">
-                        <h4>
-                            Properties
-                        </h4>
-                
-                        <p>
-                            The properties of <code>CshtmlComponentReferenceableBase&lt;ReferencableComponentType&gt;</code> (not including inherited).
-                        </p>
-                
-                        <section class="indent p-no-margin">
-                            <h5>
-                                Reference
-                            </h5>
-                
-                            <p>
-                                <strong>Type</strong>: CshtmlComponentReferenceableBase&lt;ReferencableComponentType&gt;
-                            </p>
-                            <p>
-                                <strong>Default Value</strong>: null
-                            </p>
-                            <p>
-                                <strong>Description</strong>: A property that allows you to capture the reference to a component from a .cshtml file.
-                                Useful if, for example, one must access an id that another component defines. See the Advanced Example for how to accomplish
-                                this.
-                            </p>
-                        </section>
-                    </section>
-                
-                    <section class="indent">
-                        <h4>
-                            Constructors
-                        </h4>
-                
-                        <p>
-                            The constructors of <code>CshtmlComponentReferenceableBase&lt;ReferencableComponentType&gt;</code> are exactly the same as those of
-                            <code>CshtmlComponentBase</code>.
-                        </p>
-                    </section>
-                </section>
-
-                <section class="indent">
-                    <h3>CshtmlHead</h3>
-                    <p>
-                        <code>CshtmlHead</code> allows one to inject content in to the <code>head</code> tag of a document. By default,
-                        only one <code>CshtmlHead</code> tag is supported per component, but this can be overridden with the use of attributes.
-                        Note that instantiating multiple components of the same type will not render the content of a <code>CshtmlHead</code> tag
-                        multiple times, unless explicitly specified.
-                    </p>
-
-                    <section class="indent">
-                        <h4>
-                            Attributes
-                        </h4>
-
-                        <p>
-                            The attributes of <code>CshtmlHead</code>.
-                        </p>
-
-                        <section class="indent p-no-margin">
-                            <h5>
-                                Key
-                            </h5>
-
-                            <p>
-                                <strong>Type</strong>: string
-                            </p>
-                            <p>
-                                <strong>Default Value</strong>: ""
-                            </p>
-                            <p>
-                                <strong>Description</strong>: Sets a key for the tag. Multiple <code>CshtmlHead</code> tags with unique keys are supported per component.
-                                Only the first <code>CshtmlHead</code> tag with a unique key is rendered (within the context of a component).
-                            </p>
-                        </section>
-
-                        <section class="indent p-no-margin">
-                            <h5>
-                                Multiple
-                            </h5>
-                        
-                            <p>
-                                <strong>Type</strong>: bool
-                            </p>
-                            <p>
-                                <strong>Default Value</strong>: false
-                            </p>
-                            <p>
-                                <strong>Description</strong>: If true, then renders the content of a <code>CshtmlHead</code> tag, even if the key is not unique. Additionally,
-                                if true, then instantiating multiple components of the same type in a request will render the content of a <code>CshtmlHead</code> tag multiple 
-                                times. This feature should almost never be used.                                
-                            </p>
-                        </section>
-
-                        <section class="indent p-no-margin">
-                            <h5>
-                                ContentOrder
-                            </h5>
-                        
-                            <p>
-                                <strong>Type</strong>: int
-                            </p>
-                            <p>
-                                <strong>Default Value</strong>: int.MaxValue
-                            </p>
-                            <p>
-                                <strong>Description</strong>: Sets the order of <code>CshtmlHead</code> tags. The content of <code>CshtmlHead</code> tags
-                                with negative values are prepended to the document <code>head</code> element, so that the most negative ones are rendered first. 
-                                The content of <code>CshtmlHead</code> tags with positive values (including zero) are appended to the document <code>head</code>
-                                element, so that the least positive ones are rendered first. The default behavior will append everything to the <code>head</code>
-                                element. Useful if certain components require, for example, the JS of other components. One component should in most cases 
-                                use only one ContentOrder. 
+                                <strong>Value</strong>: value
                             </p>
                         </section>
                     </section>
 
                     <section class="indent">
                         <h4>
-                            CshtmlHead Ordering Example
+                            Instance Methods
                         </h4>
-
+                    
                         <p>
-                            An example that shows how <code>CshtmlHead</code> affects the content of the <code>head</code> element.
+                            The instance methods of <code>GenericEnumValue&lt;TValue&gt;</code>, their arguments and what they
+                            do and return (not including inherited).
                         </p>
-
-                        <pre><code id="cshtml-head-ordering-example-code"></code></pre>
-                    </section>
-                </section>
-
-                <section class="indent">
-                    <h3>CshtmlBody</h3>
-                    <p>
-                        <code>CshtmlBody</code> allows one to inject content in to the <code>body</code> tag of a document. By default,
-                        only one <code>CshtmlBody</code> tag is supported per component, but this can be overridden with the use of attributes.
-                        Note that instantiating multiple components of the same type will not render the content of a <code>CshtmlBody</code> tag
-                        multiple times, unless explicitly specified.
-                    </p>
-                
-                    <section class="indent">
-                        <h4>
-                            Attributes
-                        </h4>
-                
-                        <p>
-                            The attributes of <code>CshtmlBody</code>.
-                        </p>
-                
+                    
                         <section class="indent p-no-margin">
                             <h5>
-                                Key
+                                public bool Equals(object? obj)
                             </h5>
-                
                             <p>
-                                <strong>Type</strong>: string
-                            </p>
-                            <p>
-                                <strong>Default Value</strong>: ""
-                            </p>
-                            <p>
-                                <strong>Description</strong>: Sets a key for the tag. Multiple <code>CshtmlBody</code> tags with unique keys are supported per component.
-                                Only the first <code>CshtmlBody</code> tag with a unique key is rendered (within the context of a component).
+                                Determines whether <code>this</code> and <code>obj</code> are equal.
+                                The equality is based on the equality comparison of the underlying ValueSet.
                             </p>
                         </section>
-                
+                    
                         <section class="indent p-no-margin">
                             <h5>
-                                Multiple
+                                public bool Equals(GenericEnum? other)
                             </h5>
-                
                             <p>
-                                <strong>Type</strong>: bool
-                            </p>
-                            <p>
-                                <strong>Default Value</strong>: false
-                            </p>
-                            <p>
-                                <strong>Description</strong>: If true, then renders the content of a <code>CshtmlBody</code> tag, even if the key is not unique. Additionally,
-                                if true, then instantiating multiple components of the same type in a request will render the content of a <code>CshtmlBody</code> tag multiple
-                                times. This feature should almost never be used.
+                                Determines whether <code>this</code> and <code>other</code> are equal.
+                                The equality is based on the equality comparison of the underlying ValueSet.
                             </p>
                         </section>
-                
+                    
                         <section class="indent p-no-margin">
                             <h5>
-                                ContentOrder
+                                public bool Equals(GenericEnum&lt;TValue&gt;? other)
                             </h5>
-                
                             <p>
-                                <strong>Type</strong>: int
+                                Determines whether <code>this</code> and <code>other</code> are equal.
+                                The equality is based on the equality comparison of the underlying ValueSet.
                             </p>
+                        </section>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public int GetHashCode()
+                            </h5>
                             <p>
-                                <strong>Default Value</strong>: int.MaxValue
-                            </p>
-                            <p>
-                                <strong>Description</strong>: Sets the order of <code>CshtmlBody</code> tags. The content of <code>CshtmlBody</code> tags
-                                with negative values are prepended to the document <code>body</code> element, so that the most negative ones are rendered first.
-                                The content of <code>CshtmlBody</code> tags with positive values (including zero) are appended to the document <code>body</code>
-                                element, so that the least positive ones are rendered first. The default behavior will append everything to the <code>body</code>
-                                element. Useful if certain components require, for example, the JS of other components. One component should in most cases
-                                use only one ContentOrder.
+                                Returns <code>base.GetHashCode()</code>.
                             </p>
                         </section>
                     </section>
-                
+                    
                     <section class="indent">
                         <h4>
-                            CshtmlBody Ordering Example
+                            Static Properties
                         </h4>
-                        
-                        <p>
-                            An example that shows how <code>CshtmlBody</code> affects the content of the <code>head</code> element.
-                        </p>
-                        
-                        <pre><code id="cshtml-body-ordering-example-code"></code></pre>
-                    </section>
-                </section>
 
-                <section class="indent">
-                    <h3>CshtmlInitial</h3>
-                    <p>
-                        <code>CshtmlInitial</code> allows one to inject one-off content in to a component. By default,
-                        only one <code>CshtmlInitial</code> tag is supported per component, but this can be overridden with the use of attributes.
-                        Note that instantiating multiple components of the same type will not render the content of a <code>CshtmlInitial</code> tag
-                        multiple times, unless explicitly specified.
-                    </p>
-                
-                    <section class="indent">
-                        <h4>
-                            Attributes
-                        </h4>
-                
                         <p>
-                            The attributes of <code>CshtmlInitial</code>.
+                            The static properties of <code>GenericEnumBase&lt;T, TValue&gt;</code>.
                         </p>
-                
+
                         <section class="indent p-no-margin">
                             <h5>
-                                Key
+                                public static IReadOnlyList&lt;T&gt; Values
                             </h5>
-                
                             <p>
-                                <strong>Type</strong>: string
-                            </p>
-                            <p>
-                                <strong>Default Value</strong>: ""
-                            </p>
-                            <p>
-                                <strong>Description</strong>: Sets a key for the tag. Multiple <code>CshtmlInitial</code> tags with unique keys are supported per component.
-                                Only the first <code>CshtmlInitial</code> tag with a unique key is rendered (within the context of a component).
+                                The statically defined distinct values of a specific custom GenericEnum. These distinct values
+                                must be declared within the custom class as properties or fields and must be of the specific type.
+                                See <a href="#examples">Examples</a> for concrete examples.
                             </p>
                         </section>
-                
+
                         <section class="indent p-no-margin">
                             <h5>
-                                Multiple
+                                public static Dictionary&lt;ulong, T&gt; ValuesByBitValue
                             </h5>
-                
                             <p>
-                                <strong>Type</strong>: bool
+                                A dictionary of the bitvalues of the property <code>Values</code> and their respective GenericEnums.
                             </p>
+                        </section>
+
+                    </section>
+
+                    <section class="indent">
+                        <h4>
+                            Static Methods
+                        </h4>
+
+                        <p>
+                            The static methods of <code>GenericEnumBase&lt;T, TValue&gt;</code>, their arguments and what they do and return.
+                        </p>
+
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static IReadOnlyList&lt;T&gt; GetValues()
+                            </h5>
                             <p>
-                                <strong>Default Value</strong>: false
-                            </p>
-                            <p>
-                                <strong>Description</strong>: If true, then renders the content of a <code>CshtmlInitial</code> tag, even if the key is not unique. Additionally,
-                                if true, then instantiating multiple components of the same type in a request will render the content of a <code>CshtmlInitial</code> tag multiple
-                                times. This feature should almost never be used.
+                                Returns the <code>Values</code> property.
                             </p>
                         </section>
                     </section>
-                </section>
-
-                <section class="indent">
-                    <h3>CshtmlSlot</h3>
-                    <p>
-                        <code>CshtmlSlot</code> allows one to specify named slots. The parent component then
-                        decides where this content is rendered. Can be inherited to create typed slots. Typed slots 
-                        do not require the specification of the Name attribute, which improves maintenance. 
-                    </p>
-                
+                    
                     <section class="indent">
                         <h4>
-                            Attributes
+                            Operators
                         </h4>
-                
+                    
                         <p>
-                            The attributes of <code>CshtmlSlot</code>.
+                            The operators of <code>GenericEnum&lt;TValue&gt;</code>, their arguments and what they do and return.
+                            Note that the operators return either a <code>bool</code> or an object of type <code>T</code>.
                         </p>
-                
+                    
                         <section class="indent p-no-margin">
                             <h5>
-                                Name
+                                public static bool operator ==(GenericEnumBase&lt;T, TValue&gt; genericEnum0, GenericEnumBase&lt;T, TValue&gt; genericEnum1)
                             </h5>
-                
                             <p>
-                                <strong>Type</strong>: string
-                            </p>
-                            <p>
-                                <strong>Default Value</strong>: ""
-                            </p>
-                            <p>
-                                <strong>Description</strong>: The name of the slot. The content of the slot is stored in a dictionary, where
-                                Name is the key. Components that implement slots, should then render this content in an appropriate place.
+                                Determines whether two <code>GenericEnumBase&lt;T, TValue&gt;</code> are equal.
                             </p>
                         </section>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static bool operator !=(GenericEnumBase&lt;T, TValue&gt; genericEnum0, GenericEnumBase&lt;T, TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Determines whether two <code>GenericEnumBase&lt;T, TValue&gt;</code> are not equal.
+                            </p>
+                        </section>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static T operator +(GenericEnumBase&lt;T, TValue&gt; genericEnum0, GenericEnumBase&lt;T, TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the union operator on two <code>GenericEnumBase&lt;T, TValue&gt;</code>. In essence, adds <code>genericEnum0.ValueSet</code>
+                                and <code>genericEnum1.ValueSet</code> together, but without duplicates.
+                            </p>
+                        </section>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static T operator -(GenericEnumBase&lt;T, TValue&gt; genericEnum0, GenericEnumBase&lt;T, TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the except operator on two <code>GenericEnumBase&lt;T, TValue&gt;</code>. In essence, the <code>genericEnum1.ValueSet</code>
+                                is removed from <code>genericEnum0.ValueSet</code>.
+                            </p>
+                        </section>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static T operator &(GenericEnumBase&lt;T, TValue&gt; genericEnum0, GenericEnumBase&lt;T, TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the intersect operator on two <code>GenericEnumBase&lt;T, TValue&gt;</code>. In essence, an intersection is calculated
+                                between <code>genericEnum0.ValueSet</code> and <code>genericEnum1.ValueSet</code>.
+                            </p>
+                        </section>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static T operator |(GenericEnumBase&lt;T, TValue&gt; genericEnum0, GenericEnumBase&lt;T, TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the union operator on two <code>GenericEnumBase&lt;T, TValue&gt;</code>. In essence, adds <code>genericEnum0.ValueSet</code>
+                                and <code>genericEnum1.ValueSet</code> together, but without duplicates.
+                            </p>
+                        </section>
+                    
+                        <section class="indent p-no-margin">
+                            <h5>
+                                public static T operator ^(GenericEnumBase&lt;T, TValue&gt; genericEnum0, GenericEnumBase&lt;T, TValue&gt; genericEnum1)
+                            </h5>
+                            <p>
+                                Applies the symmetric except operator on two <code>GenericEnumBase&lt;T, TValue&gt;</code>. In essence, calculates the values
+                                that exist in <code>genericEnum0.ValueSet</code> or <code>genericEnum1.ValueSet</code>, but no both.
+                                Commonly known as the XOR operator.
+                            </p>
+                        </section>
+                    
                     </section>
                 </section>
 
@@ -827,139 +1133,59 @@
                 </h2>
                 
                 <p>
-                    This section documents how <strong>CshtmlComponent</strong> should be installed and how to author custom components.
+                    This section documents how <strong>GenericEnum</strong> should be installed and how to create custom GenericEnums.
                 </p>
 
-                <section class="indent">
-                    <h3>
-                        Installation & Initialization
-                    </h3>
-                    <p>
-                        <ol>
-                            <li>
-                                Install the <a href="https://www.nuget.org/packages/Acmion.CshtmlComponent/">Nuget package</a>.
-                            </li>
-                            <li>
-                                Dependency inject some classes in <code>Startup.cs</code>:
-                                <pre><code id="dependency-injection-code"></code></pre>
-                            </li>
-                            <li>
-                                In an appropriate <code>_ViewImports.cshtml</code> (usually located directly under the <code>Pages</code> 
-                                directory) add the following:
-                                <pre><code id="view-imports-code"></code></pre>
-                            </li>
-                        </ol>
-                    </p>
-                </section>
+                <p>
+                    <ol>
+                        <li>
+                            Install the <a href="https://www.nuget.org/packages/Acmion.GenericEnums/">Nuget package</a>.
+                        </li>
+                        <li>
+                            Create a custom class <code>CustomGenericEnum</code> and inherit <code>GenericEnumBase&lt;T, TValue&gt;</code>, where
+                            <code>T</code> is the custom GenericEnum type (in this case <code>CustomGenericEnum</code>) and <code>TValue</code>
+                            is the type of the underlying value. Concretely with <code>double</code> as the underlying value type:
+                            
+                            <pre><code>public class CustomGenericEnum : GenericEnumBase&lt;CustomGenericEnum, double&gt; { ... }</code></pre>
+                        </li>
+                        <li>
+                            Create a constructor with one argument and of type <code>TValue</code> and make it <code>private</code>. Call the 
+                            <code>base</code> constructor with this argument.
+                            Concretely:
 
-                <section class="indent">
-                    <h3>
-                        Authoring Custom CshtmlComponents
-                    </h3>
-                    <p>
-                        <ol>
-                            <li>
-                                Create the file <code>ExampleComponent.cshtml.cs</code> somewhere under your ASP.NET Core Project (usually 
-                                under the <code>Pages</code> or <code>View</code> directory, but anything should work).
-                            </li>
-                            <li>
-                                Create the file <code>ExampleComponent.cshtml</code> in the same location.
-                            </li>
-                            <li>
-                                In <code>ExampleComponent.cs</code>:
-                                <ol>
-                                    <li>
-                                        Inherit <code>CshtmlComponentBase</code>. If you want to capture the reference to this component, then you
-                                        should instead inherit <code>CshtmlComponentReferenceableBase&lt;ExampleComponent&gt;</code>. No other changes
-                                        necessary.
-                                    </li>
-                                    <li>
-                                        Implement one of the constructor so that all arguments are dependency injected arguments. In most cases,
-                                        it is enough that <code>IHtmlHelper htmlHelper</code> is the only argument. 
-                                    </li>
-                                    <li>
-                                        Add <code>[HtmlTargetElement("ExampleComponentTag")]</code> to the component class, where
-                                        <code>ExampleComponentTag</code> is the tag that the component will be associated with.
-                                    </li>
-                                    <li>
-                                        Optionally, specify how the tag should be closed in <code>HtmlTargetElement</code>, see more about how this
-                                        is achieved in the <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/tag-helpers/authoring">TagHelper docs</a>.
-                                    </li>
-                                    <li>
-                                        List all component attributes as C# properties. ASP.NET Core will translate the properties to their kebabcased
-                                        variants, unless otherwise specified with <code>[HtmlAttributeName("AttributeName")]</code>, where
-                                        <code>AttributeName</code> is the name of the attribute.
-                                    </li>
-                                    <li>
-                                        Create fields or properties for all other values you wish to use in <code>ExampleComponent.cshtml</code>.
-                                    </li>
-                                    <li>
-                                        Optionally, override <code>protected virtual Task ProcessComponent()</code>, which is called before
-                                        <code>ExampleComponent.cshtml</code> is executed. Here you can extract information from properties and
-                                        access other fields etc. This can not be done in the constructor, since any provided properties
-                                        will not have been set yet. The nested child content can be accessed in this method by accessing
-                                        <code>ChildContent</code>. The named slots can be accessed by accessing <code>NamedSlots</code>
-                                    </li>
-                                </ol>
-                            </li>
-                            <li>
-                                In <code>ExampleComponent.cshtml</code>:
-                                <ol>
-                                    <li>
-                                        Set the model to <code>ExampleComponent</code> with <code>@model ExampleComponent</code>. You may need to
-                                        add appropriate using statements.
-                                    </li>
-                                    <li>
-                                        Component properties and field are accessible with <code>Model.PropertyName</code>.
-                                    </li>
-                                    <li>
-                                        The nested child content can be accessed with <code>Model.ChildContent</code>. To render the child content,
-                                        you can use <code>Html.Raw(Model.ChildContent)</code>, but note that this does not encode the HTML, which means
-                                        that XSS attacks are possible if non-validated user input is used as child content.
-                                    </li>
-                                    <li>
-                                        Any named slots can be accessed with <code>Model.NamedSlots</code>. To render the slot content,
-                                        you can use <code>Html.Raw(Model.NamedSlots["SlotName"])</code>, but note that this does not encode the HTML, which means
-                                        that XSS attacks are possible if non-validated user input is used as child content. The named slots have to be defined, in
-                                        the initializing context, with <code>&lt;CshtmlSlot Name="SlotName"&gt;[CONTENT HERE]&lt;CshtmlSlot&gt;</code> or by using
-                                        typed slots. See the advanced example in <a href="#examples">Examples</a>.
-                                    </li>
-                                    <li>
-                                        Use <code>&lt;CshtmlHead&gt;[CONTENT HERE]&lt;CshtmlHead&gt;</code>,
-                                        <code>&lt;CshtmlBody&gt;[CONTENT HERE]&lt;CshtmlBody&gt;</code> and
-                                        <code>&lt;CshtmlInitial&gt;[CONTENT HERE]&lt;CshtmlInitial&gt;</code> 
-                                        to render or inject content according to the rules in <a href="#components">Components</a>. 
-                                    </li>
-                                    <li>
-                                        Render your markup and use <code>.cshtml</code> files as you wish.
-                                    </li>
-                                </ol>
-                            </li>
-                        </ol>
-                    </p>
-                </section>
+<pre><code>public class CustomGenericEnum : GenericEnumBase&lt;CustomGenericEnum, double&gt; 
+{ 
+    private CustomGenericEnum(double value) : base(value)
+    {
 
-                <section class="indent">
-                    <h3>
-                        Notes
-                    </h3>
-                    <p>
-                        <ul>
-                            <li>
-                                See the sample project in the <a href="https://github.com/Acmion/CshtmlComponent.git">CshtmlComponent GitHub repository</a> for concrete
-                                examples.
-                            </li>
-                            <li>
-                                A CshtmlComponent is just a TagHelper with some "magic". In practice, everything that applies to
-                                ASP.NET Core TagHelpers apply to CshtmlComponents.
-                            </li>
-                            <li>
-                                The entire CshtmlComponent is passed as Model to the <code>.cshtml</code> file. This includes properties
-                                inherited from TagHelper.
-                            </li>
-                        </ul>
-                    </p>
-                </section>
+    }
+}</code></pre>
+
+                        </li>
+                        <li>
+                            Declare public static fields or properties, which will act as the distinct values of a specific GenericEnum.
+                            Concretely:
+                        
+<pre><code>public class CustomGenericEnum : GenericEnumBase&lt;CustomGenericEnum, double&gt; 
+{ 
+    public static readonly CustomGenericEnum Zero = new CustomGenericEnum(0);
+    public static readonly CustomGenericEnum Pi = new CustomGenericEnum(3.14159);
+
+    public static CustomGenericEnum One { get; } = new CustomGenericEnum(1);
+    public static CustomGenericEnum PiSquared { get; } = new CustomGenericEnum(3.14159 * 3.14159);
+
+    private CustomGenericEnum(double value) : base(value)
+    {
+
+    }
+}</code></pre>
+                        </li>
+                        <li>
+                            That's all! Now go and use GenericEnum for your own applications!
+                        </li>
+                    </ol>
+                </p>
+
             </section>
 
             <section>
@@ -969,118 +1195,18 @@
 
                 <section>
                     <h4>
-                        V3.1.0
-                    </h4>
-                    <a href="/v3.1.0/">
-                        V3.1.0 Documentation
-                    </a>
-                    <p>
-                        Published: Oct 30, 2020
-                    </p>
-                    <p>
-                        Added constructors to <code>CshtmlComponentBase</code> and <code>CshtmlComponentReferenceableBase</code> to make development more convenient.
-                        The main change was that from now on the path to the associated .cshtml file can be automatically generated by analyzing the namespace and
-                        class name. This improves code maintainability and reduces unnecessary bugs. The path to the associated .csthml file can still be defined manually.
-                    </p>
-                </section>
-
-                <section>
-                    <h4>
-                        V3.0.0
-                    </h4>
-                    <a href="/v3.0.0/">
-                        V3.0.0 Documentation
-                    </a>
-                    <p>
-                        Published: Oct 11, 2020
-                    </p>
-                    <p>
-                        Breaking changes. Added support for head and body content injection with <code>CshtmlHead</code> and <code>CshtmlBody</code>.
-                        Rewrote <code>CshtmlInitial</code> to no longer depend on the obsolete <code>Context</code> attribute. Upgrading from a 
-                        previous version should only minimally affect previous usage of <code>CshtmlInitial</code> (might even in most cases work
-                        without any changes). Additionally, slight changes in dependency injection (Startup.cs).
-                    </p>
-                </section>
-
-                <section>
-                    <h4>
-                        V2.2.0
-                    </h4>
-                    <a href="/v2.2.0/">
-                        V2.2.0 Documentation
-                    </a>
-                    <p>
-                        Published: Sep 26, 2020
-                    </p>
-                    <p>
-                        Added support component reference capturing. This grants access to component properties outside
-                        the components own context. See the Razor code in <a href="#example">Example</a> for an example 
-                        of how this is done. Note: This feature must be enabled at a component level.
-                    </p>
-                </section>
-
-                <section>
-                    <h4>
-                        V2.1.0
-                    </h4>
-                    <a href="/v2.1.0/">
-                        V2.1.0 Documentation
-                    </a>
-                    <p>
-                        Published: Sep 20, 2020
-                    </p>
-                    <p>
-                        Added support for <code>CshtmlInitial</code>, which allows component code be rendered once
-                        per request, regardless of the number of instantiated components.
-                    </p>
-                </section>
-
-                <section>
-                    <h4>
-                        V2.0.0
-                    </h4>
-                    <a href="/v2.0.0/">
-                        V2.0.0 Documentation
-                    </a>
-                    <p>
-                        Published: Sep 19, 2020
-                    </p>
-                    <p>
-                        Breaking changes. Added support for named slots and added tag helper context and output as arguments 
-                        to <code>ProcessComponent</code>.
-                    </p>
-                </section>
-
-                <section>
-                    <h4>
-                        V1.1.0
-                    </h4>
-                    <a href="/v1.1.0/">
-                        V1.1.0 Documentation
-                    </a>
-                    <p>
-                        Published: Sep 17, 2020
-                    </p>
-                    <p>
-                        Added support for <code>TagMode</code>, which provides some extra customizability.
-                    </p>
-                </section>
-
-                <section>
-                    <h4>
                         V1.0.0
                     </h4>
                     <a href="/v1.0.0/">
                         V1.0.0 Documentation
                     </a>
                     <p>
-                        Published: Sep 15, 2020
+                        Published: Jan 11, 2021
                     </p>
                     <p>
                         The initial release.
                     </p>
                 </section>
-            
             
             </section>
 
@@ -1090,11 +1216,11 @@
                 </h2>
 
                 <p>
-                    CshtmlComponent was developed by <a href="https://acmion.com">Acmion</a> <a href="https://github.com/Acmion">(GitHub)</a>.
+                    GenericEnum was developed by <a href="https://acmion.com">Acmion</a> <a href="https://github.com/Acmion">(GitHub)</a>.
                 </p>
 
                 <p>
-                    Contribute to CshtmlComponent in it's <a href="https://github.com/Acmion/CshtmlComponent">GitHub repository</a>.
+                    Contribute to GenericEnum in it's <a href="https://github.com/Acmion/GenericEnum">GitHub repository</a>.
                 </p>
             
             </section>
@@ -1103,62 +1229,20 @@
         <div style="height: 200px"></div>
         <div>
             <script>
-                async function loadExamples()
+                function loadCodeExamples()
                 {
-                    var cshtmlComponentCodeFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/ExampleComponent.cshtml.cs");
-                    var cshtmlComponentCshtmlFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/ExampleComponent.cshtml");
-                    var cshtmlComponentInstantiationFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/ExampleComponentInstantiation.cshtml");
+                    var codeElements = document.querySelectorAll("pre code");
 
-                    var cshtmlComponentAdvancedCodeFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/AdvancedExampleComponent.cshtml.cs");
-                    var cshtmlComponentAdvancedCshtmlFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/AdvancedExampleComponent.cshtml");
-                    var cshtmlComponentAdvancedInstantiationFetch = fetch("SampleRazorPagesApplication/Pages/Components/Example/AdvancedExampleComponentInstantiation.cshtml");
-
-                    var cshtmlComponentCode = await (await cshtmlComponentCodeFetch).text();
-                    var cshtmlComponentCshtml = await (await cshtmlComponentCshtmlFetch).text();
-                    var cshtmlComponentInstantiation = await (await cshtmlComponentInstantiationFetch).text();
-
-                    var cshtmlComponentAdvancedCode = await (await cshtmlComponentAdvancedCodeFetch).text();
-                    var cshtmlComponentAdvancedCshtml = await (await cshtmlComponentAdvancedCshtmlFetch).text();
-                    var cshtmlComponentAdvancedInstantiation = await (await cshtmlComponentAdvancedInstantiationFetch).text();
-
-                    document.getElementById("basic-example-code").innerText = cshtmlComponentCode;
-                    document.getElementById("basic-example-cshtml-code").innerText = cshtmlComponentCshtml;
-                    document.getElementById("basic-example-instantiation-code").innerText = cshtmlComponentInstantiation;
-
-                    document.getElementById("advanced-example-code").innerText = cshtmlComponentAdvancedCode;
-                    document.getElementById("advanced-example-cshtml-code").innerText = cshtmlComponentAdvancedCshtml;
-                    document.getElementById("advanced-example-instantiation-code").innerText = cshtmlComponentAdvancedInstantiation;
+                    for(let ce of codeElements)
+                    {
+                        if(ce.dataset.file)
+                        {
+                            fetch(ce.dataset.file).then(response => response.text()).then(text => ce.innerText = text);
+                        }
+                    }
                 }
 
-                async function loadComponents()
-                {
-                    var cshtmlHeadCodeFetch = fetch("/Web/examples/cshtml-head-ordering-example-code.html");
-                    var cshtmlBodyCodeFetch = fetch("/Web/examples/cshtml-body-ordering-example-code.html");
-
-                    var cshtmlHeadCode = await (await cshtmlHeadCodeFetch).text();
-                    var cshtmlBodyCode = await (await cshtmlBodyCodeFetch).text();
-
-                    document.getElementById("cshtml-head-ordering-example-code").innerText = cshtmlHeadCode;
-                    document.getElementById("cshtml-body-ordering-example-code").innerText = cshtmlBodyCode;
-
-                }
-
-                async function loadUsage()
-                {
-                    var dependencyInjcetionCodeFetch = fetch("/Web/examples/dependency-injection-code.txt");
-                    var viewImportsCodeFetch = fetch("/Web/examples/view-imports-code.txt");
-
-                    var dependencyInjcetionCode = await (await dependencyInjcetionCodeFetch).text();
-                    var viewImportsCode = await (await viewImportsCodeFetch).text();
-
-                    document.getElementById("dependency-injection-code").innerText = dependencyInjcetionCode;
-                    document.getElementById("view-imports-code").innerText = viewImportsCode;
-
-                }
-
-                loadExamples();
-                loadComponents();
-                loadUsage();
+                loadCodeExamples();
             </script>
         </div>
     </body>
